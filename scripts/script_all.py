@@ -107,9 +107,9 @@ def csv_to_parquet(csv_file_path, parquet_file_path):
         pbar.update(1)
 
 
-def process_directory(directory):
+def process_directory(directory, rename_output_folder):
     # Concatenate CSV files in the directory
-    concatenated_data = concat_csv_files(directory)
+    concatenated_data = concat_csv_files(rename_output_folder)
 
     # Analyze the concatenated data
     analyze_concatenated_data(concatenated_data)
@@ -164,5 +164,5 @@ rename_and_move_files_in_directory(directory_path, rename_output_folder)
 rename_process_folder = r'C:\Users\Igor\Desktop\dados\data'
 
 # Process the renamed files
-process_directory(rename_process_folder)
+process_directory(rename_process_folder, rename_output_folder)
 
