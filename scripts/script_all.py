@@ -160,6 +160,9 @@ rename_output_folder = r'C:\Users\Igor\Desktop\dados\data\data_renamed'
 # Rename and move files in the directory
 rename_and_move_files_in_directory(directory_path, rename_output_folder)
 
+# Provide the new path for the process the renamed files
+rename_process_folder = r'C:\Users\Igor\Desktop\dados\data'
+
 # Process the renamed files
-process_directory(rename_output_folder)
+process_directory(rename_process_folder)
 
