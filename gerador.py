@@ -156,10 +156,14 @@ def generate_real_flight(base_flight, year, day):
     delay = norm.rvs(loc=delay_center, scale=15, size=1)[0]
 
     # in holiday delay center is worse in plus between 10 and 60
-    if day in holidays:
+    is_holiday = day in holidays
+    if is_holiday:
         # use a normal
         delay += norm.rvs(loc=35, scale=10, size=1)[0]
 
+    flight.append(day)
+    flight.append(year)
+    flight.append(is_holiday)
     flight.append(delay)
 
     return flight
