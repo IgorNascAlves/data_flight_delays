@@ -1,4 +1,3 @@
-import pandas
 import random
 from scipy.stats import norm
 import numpy as np
@@ -11,6 +10,10 @@ AIRCRAFT_TYPES = ['Boeing 737', 'Airbus A320', 'Boeing 777', 'Airbus A330', 'Boe
 HOLIDAY_COUNT = 20
 YEAR_FROM=2010
 YEAR_TO=2022
+SEED = 42
+
+# set seed for reproducibility
+random.seed(SEED)
 
 def mixture_rvs(size, w1, mu1, var1, mu2, var2):
     w2 = 1 - w1
@@ -39,53 +42,17 @@ class Airline:
     def __repr__(self):
         return self.code
 
-
-
 def generate_origin(current):
     while True:
-        # creates a random two letter airline code
+        # creates a random tree letter origin code
         origin = []
         origin.append(chr(random.randint(65, 90)))
         origin.append(chr(random.randint(65, 90)))
         origin.append(chr(random.randint(65, 90)))
         origin = ''.join(origin)
-        # checks if the airline code is already in use
+        # checks if the origin code is already in use
         if origin not in current:
             return origin
-
-
-# 'flight_id'
-# 'scheduled_time'
-# 'airline' OK 
-# 'aircraft_type' OK
-# 'operation_type' ARRIVE/DEPART/TURNAROUND?????????
-# 'origin'
-# 'destination' OK
-# 'home_airport'
-# 'takeoff_timestamp'
-# 'landing_timestamp'
-# 'is_cancelled'
-
-# Flight data: example columns
-# flight_id: String
-# scheduled_time: datetime
-# airline: string (iata code)
-# aircraft_type: string
-# operation_type: “arrival”, “departure” or “turnaround”
-# Information about the origin, destination and home airport
-# Timestamps for different legs of the flight, e.g. takeoff
-# Is_cancelled: bool
-
-#  Flight type and number OK
-# - Origin and destination airport OK
-# - schengen/non-schengen, EU/non-EU OK
-# - Airline
-# - Aircraft type
-# - Month, day, weekday
-# - time of day OK
-# - Holiday, holiday during adjacent days OK
-
-
 
 def generate_flight(airlines, k, origins):
     flight = []
@@ -126,7 +93,6 @@ def generate_flight(airlines, k, origins):
 
     return flight
 
-
 def generate_airline(current):
     while True:
         # creates a random two letter airline code
@@ -138,7 +104,6 @@ def generate_airline(current):
         if airline not in current:
             return Airline(airline)
 
-
 def generate_holiday(current):
     while True:
         # picks a random number between 1 and 365
@@ -146,7 +111,6 @@ def generate_holiday(current):
         # checks if the holiday is already in use
         if holiday not in current:
             return holiday
-
 
 def generate_real_flight(base_flight, year, day):
     flight = []
@@ -162,24 +126,40 @@ def generate_real_flight(base_flight, year, day):
         # use a normal
         delay += norm.rvs(loc=35, scale=10, size=1)[0]
 
+    # in weekend delay center is worse in plus between 10 and 30
+    is_weekend = day % 7 == 0 or day % 7 == 6
+    if is_weekend:
+        # use a normal
+        delay += norm.rvs(loc=20, scale=5, size=1)[0]
+
+    # in some airlines delay center is worse in plus between 10 and 30
+    is_worse_airline = base_flight[1].code in worse_airlines
+    if is_worse_airline:
+        # use a normal
+        delay += norm.rvs(loc=20, scale=5, size=1)[0]
+
     flight.append(day)
     flight.append(year)
     flight.append(is_holiday)
     flight.append(delay)
 
     return flight
-    
+
 
 airlines = []
 for i in range(AIRLINE_COUNT):
     airlines.append(generate_airline(airlines))
 print(airlines)
 
+# airlines with worse delays
+worse_airlines = [airline.code for airline in random.choices(airlines, k=5)]
+
 origins = []
 for i in range(ORIGIN_COUNT):
     origins.append(generate_origin(origins))
 print(origins)
 
+#dentro da função generate_holiday, verificar se o if já não garante a condição de não repetição então não precisa ser set pode ser list
 holidays = set()
 for i in range(HOLIDAY_COUNT):
     h = generate_holiday(holidays)
@@ -199,15 +179,9 @@ for year in range(YEAR_FROM, YEAR_TO+1):
         for base_flight in daily_flights:
             flights.append(generate_real_flight(base_flight, year, day))
 
-
-# output das colunas
-# is_holiday
-# cia_area
-# deveria ser capaz de prever o delay
-
 #function thats saves flights on a csv file
 def save_flights(flights):
-    with open(r'data\flights.csv', 'w', newline='') as file:
+    with open(r'data\flights2.csv', 'w', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(["flight_id", "airline", "aircraft_type", "schengen", "origin", "arrival_time", "departure_time", "day", "year", "is_holiday", "delay"])
         for flight in flights:
@@ -217,3 +191,32 @@ save_flights(flights)
 
 # print(len(flights))
 # print(flights[:10])
+
+
+
+
+# Flight data:
+
+# Done:
+
+# - Flight type and number OK
+# - Origin and destination airport OK
+# - schengen/non-schengen, EU/non-EU OK
+# - time of day OK
+# - Holiday, holiday during adjacent days OK
+# - output das colunas OK
+# - is_holiday OK
+
+# Review
+# - Airline influence on delay OK
+# - Weekend influence on delay OK
+
+# TODO:
+# - Aircraft type
+# - Month, day, weekday
+# - operation_type: “arrival”, “departure” or “turnaround”
+# - Information about the origin, destination and home airport
+# - Is_cancelled: bool
+# - Timestamps for different legs of the flight, e.g. takeoff
+# - voos de dias especificos
+# - voos de natal
