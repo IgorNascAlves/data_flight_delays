@@ -10,7 +10,7 @@ AIRCRAFT_TYPES = ['Boeing 737', 'Airbus A320', 'Boeing 777', 'Airbus A330', 'Boe
 HOLIDAY_COUNT = 20
 YEAR_FROM=2010
 YEAR_TO=2022
-SEED = 42
+SEED = 12321
 
 # set seed for reproducibility
 random.seed(SEED)
@@ -61,7 +61,7 @@ def generate_flight(airlines, k, origins):
     flight.append(k)
 
     # flight id (LL3050)
-    airline = random.choice(airlines)
+    airline = random.choice(airlines, )
     flight.append(airline)
 
     # weighted for aircraft type
@@ -72,6 +72,7 @@ def generate_flight(airlines, k, origins):
             5 * airline.seeds[3],
             5 * airline.seeds[4],
             5 * airline.seeds[5]])[0]
+    
     flight.append(aircraft_type)
 
     # 80% is schengen
