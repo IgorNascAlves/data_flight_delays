@@ -132,11 +132,11 @@ def generate_real_flight(base_flight, year, day):
         # use a normal
         delay += norm.rvs(loc=20, scale=5, size=1)[0]
 
-    # in some airlines delay center is worse in plus between 10 and 30
-    is_worse_airline = base_flight[1].code in worse_airlines
-    if is_worse_airline:
-        # use a normal
-        delay += norm.rvs(loc=20, scale=5, size=1)[0]
+    # # in some airlines delay center is worse in plus between 10 and 30
+    # is_worse_airline = base_flight[1].code in worse_airlines
+    # if is_worse_airline:
+    #     # use a normal
+    #     delay += norm.rvs(loc=20, scale=5, size=1)[0]
 
     flight.append(day)
     flight.append(year)
@@ -152,7 +152,7 @@ for i in range(AIRLINE_COUNT):
 print(airlines)
 
 # airlines with worse delays
-worse_airlines = [airline.code for airline in random.choices(airlines, k=5)]
+# worse_airlines = [airline.code for airline in random.choices(airlines, k=5)]
 
 origins = []
 for i in range(ORIGIN_COUNT):
@@ -220,3 +220,7 @@ save_flights(flights)
 # - Timestamps for different legs of the flight, e.g. takeoff
 # - voos de dias especificos
 # - voos de natal
+
+# quantidade de passageiros
+# fazer o schengen influenciar no delay
+# 
