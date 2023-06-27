@@ -103,6 +103,8 @@ def generate_flight(airlines, k, origins):
     departure_time = arrival_time + staying_time
     flight.append(departure_time)
 
+    
+
     return flight
 
 def generate_airline(current):
