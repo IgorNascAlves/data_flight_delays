@@ -143,6 +143,12 @@ def generate_real_flight(base_flight, year, day):
         # use a normal
         delay += norm.rvs(loc=20, scale=5, size=1)[0]
 
+    # in some origins delay center is worse in plus between 10 and 30
+    is_worse_origin = base_flight[4] in worse_origins
+    if is_worse_origin:
+        # use a normal
+        delay += norm.rvs(loc=20, scale=5, size=1)[0]
+
     # # in some airlines delay center is worse in plus between 10 and 30
     # is_worse_airline = base_flight[1].code in worse_airlines
     # if is_worse_airline:
@@ -169,6 +175,9 @@ origins = []
 for i in range(ORIGIN_COUNT):
     origins.append(generate_origin(origins))
 print(origins)
+
+# worse origins
+worse_origins = [origin.code for origin in random.choices(origins, k=5)]
 
 #dentro da função generate_holiday, verificar se o if já não garante a condição de não repetição então não precisa ser set pode ser list
 holidays = set()
