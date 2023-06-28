@@ -138,17 +138,29 @@ def generate_real_flight(base_flight, year, day):
     is_holiday = day in holidays
     if is_holiday:
         # use a normal
-        delay += norm.rvs(loc=35, scale=10, size=1)[0]
+        delay += skewnorm.rvs(a=6, loc=20, scale=10, size=1)[0]
 
     # in weekend delay center is worse in plus between 10 and 30
     is_weekend = day % 7 == 0 or day % 7 == 6
     if is_weekend:
         # use a normal
-        delay += norm.rvs(loc=20, scale=5, size=1)[0]
+        delay += skewnorm.rvs(a=6, loc=10, scale=5, size=1)[0]
+
+    # in non-schengen delay center is worse in plus between 10 and 30
+    is_non_schengen = base_flight[3] == 'non-schengen'
+    if is_non_schengen:
+        # use a normal
+        delay += skewnorm.rvs(a=6, loc=7, scale=5, size=1)[0]
 
     delay += norm.rvs(loc=AIRCRAFT_WEIGHTS_DELAY[base_flight[2]], scale=8, size=1)[0]
 
     delay += norm.rvs(loc=origins_weights[base_flight[4]], scale=5, size=1)[0]
+
+    # actual arrival time
+    actual_arrival_time = base_flight[5] + delay/60
+
+    # actual departure time
+    actual_departure_time = base_flight[6] + delay/60
 
     # # in some airlines delay center is worse in plus between 10 and 30
     # is_worse_airline = base_flight[1].code in worse_airlines
@@ -159,7 +171,8 @@ def generate_real_flight(base_flight, year, day):
     flight.append(day)
     flight.append(year)
     flight.append(is_holiday)
-    flight.append(delay)
+    flight.append(actual_arrival_time)
+    flight.append(actual_departure_time)
 
     return flight
 
@@ -202,9 +215,9 @@ for year in range(YEAR_FROM, YEAR_TO+1):
 
 #function thats saves flights on a csv file
 def save_flights(flights):
-    with open(r'data\flights4.csv', 'w', newline='') as file:
+    with open(r'data\flights5.csv', 'w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(["flight_id", "airline", "aircraft_type", "schengen", "origin", "arrival_time", "departure_time", "day", "year", "is_holiday", "delay"])
+        writer.writerow(["flight_id", "airline", "aircraft_type", "schengen", "origin", "arrival_time", "departure_time", "day", "year", "is_holiday", "actual_arrival_time", "actual_departure_time"])
         for flight in flights:
             writer.writerow(flight)
 
