@@ -150,11 +150,19 @@ def generate_real_flight(base_flight, year, day):
 
     delay += norm.rvs(loc=origins_weights[base_flight[4]], scale=origins_weights_var[base_flight[4]], size=1)[0]
 
-    # # in some airlines delay center is worse in plus between 10 and 30
-    # is_worse_airline = base_flight[1].code in worse_airlines
-    # if is_worse_airline:
-    #     # use a normal
-    #     delay += norm.rvs(loc=20, scale=5, size=1)[0]
+    r = random.random()
+    if r> 0.995:
+        noise = random.random() * 100 + 200
+    elif r > 0.9:
+        noise = random.random() * 100 + 50
+    elif r > 0.8:
+        noise = random.random() * 30 + 30
+    elif r > 0.6:
+        noise = random.random() * 10 + 10
+    else:
+        noise = random.random() - 0.5
+
+    delay += noise
 
     flight.append(day)
     flight.append(year)
@@ -203,7 +211,7 @@ for year in range(YEAR_FROM, YEAR_TO+1):
 
 #function thats saves flights on a csv file
 def save_flights(flights):
-    with open(r'data\flights5.csv', 'w', newline='') as file:
+    with open(r'data\flights_with_noise.csv', 'w', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(["flight_id", "airline", "aircraft_type", "schengen", "origin", "arrival_time", "departure_time", "day", "year", "is_holiday", "delay"])
         for flight in flights:
