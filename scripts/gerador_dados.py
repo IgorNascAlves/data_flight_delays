@@ -150,19 +150,20 @@ def generate_real_flight(base_flight, year, day):
 
     delay += norm.rvs(loc=origins_weights[base_flight[4]], scale=origins_weights_var[base_flight[4]], size=1)[0]
 
+    # add some noise
     r = random.random()
-    if r> 0.995:
-        noise = random.random() * 100 + 200
+    if r > 0.995:
+        noise = random.random() * 60
     elif r > 0.9:
-        noise = random.random() * 100 + 50
+        noise = random.random() * 30
     elif r > 0.8:
-        noise = random.random() * 30 + 30
+        noise = random.random() * 10
     elif r > 0.6:
-        noise = random.random() * 10 + 10
+        noise = random.random() * 5
     else:
         noise = random.random() - 0.5
 
-    delay += noise
+    delay += noise * random.choice([-1, 1])
 
     flight.append(day)
     flight.append(year)
