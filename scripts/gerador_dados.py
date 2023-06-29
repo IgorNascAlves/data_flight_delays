@@ -150,9 +150,14 @@ def generate_real_flight(base_flight, year, day):
 
     delay += norm.rvs(loc=origins_weights[base_flight[4]], scale=origins_weights_var[base_flight[4]], size=1)[0]
 
-    # add some noise
+    # # in some airlines delay center is worse in plus between 10 and 30
+    # is_worse_airline = base_flight[1].code in worse_airlines
+    # if is_worse_airline:
+    #     # use a normal
+    #     delay += norm.rvs(loc=20, scale=5, size=1)[0]
+
     r = random.random()
-    if r > 0.995:
+    if r> 0.995:
         noise = random.random() * 60
     elif r > 0.9:
         noise = random.random() * 30
@@ -162,8 +167,8 @@ def generate_real_flight(base_flight, year, day):
         noise = random.random() * 5
     else:
         noise = random.random() - 0.5
-
-    delay += noise * random.choice([-1, 1])
+            
+    delay += noise
 
     flight.append(day)
     flight.append(year)
